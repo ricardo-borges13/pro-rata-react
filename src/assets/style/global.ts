@@ -11,6 +11,10 @@ export const GlobalStyle = createGlobalStyle`
     }
 
     body {
-        background-color: #f0f0f0;
+        background-color:rgb(172, 54, 54);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 30px;
     }
 `
