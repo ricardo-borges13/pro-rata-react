@@ -11,7 +11,7 @@ export const GlobalStyle = createGlobalStyle`
     }
 
     body {
-        background-color:rgb(172, 54, 54);        
+        background-color: rgb(173, 180, 187);        
         margin-top: 30px;
     }
 `

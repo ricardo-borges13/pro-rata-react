@@ -1,3 +1,5 @@
+import * as S from './style.Footer'
+
 type footerProps = {
     title: string;
     version: string;
@@ -5,8 +7,8 @@ type footerProps = {
 
 export const Footer = ({title, version}: footerProps) => {
     return (
-        <footer>
-            <small> &copy; <span id="year"></span> {title} <mark id="markVersao">Versão {version}</mark></small>
-        </footer>
+        <S.footerContainer>
+            <S.smallFooter> &copy; <span id="year"></span> {title} <mark id="markVersao">Versão {version}</mark></S.smallFooter>
+        </S.footerContainer>
     )
 }

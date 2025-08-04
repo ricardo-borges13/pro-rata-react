@@ -1,7 +1,5 @@
 import styled from "styled-components";
 
-
-
 export const CenteredContainer = styled.div`
   max-height: 100vh;
   width: 100vw;
@@ -17,6 +15,7 @@ export const Wrapper = styled.div`
   box-shadow: 7px 7px 10px black;
   text-align: center;
   border-radius: 6px; 
+  user-select: none;
 `
 export const fieldsetContainer = styled.div`
  justify-items: center;
@@ -48,15 +47,13 @@ export const fieldset = styled.fieldset`
     font-size: 18px;
   }
   `
-
-
 export const divData = styled.div`
   display: flex;
   justify-content: center;
   gap: 40px;
 `
 export const divDataIF = styled.div`
-   display: flex;
+  display: flex;
   flex-direction: column;
   font-size: 17px;
   font-family: Franklin Gothic Medium ", " Arial Narrow, Arial, sans-serif; 
@@ -88,7 +85,7 @@ font-size: 17px;
   transition: all 0.2s ease;
 `
 export const divRadio = styled.div`
-display: block;
+display: none;
 font-size: 9px;
 `
 
@@ -139,9 +136,15 @@ cursor: pointer;
     transform: scale(0.98);
   }
 `
+export const divClean = styled.div`
+margin-top: 15px;
+display: flex;
+justify-content: center;
+`
+
 export const buttonClean = styled.button`
- cursor: pointer;
-  display: block;
+  display: none;
+  cursor: pointer;  
   background-color: #17a2b8;
   border-radius: 8px;
   font-size: 15px;
@@ -151,20 +154,14 @@ export const buttonClean = styled.button`
     background-color: rgb(185, 247, 247);
   }
 `
-export const divClean = styled.div`
-display: block;
-&:show{
-  display: block;
-  margin: 10px 0 20px 0;
-}
-`
+
 export const divCopiar = styled.div`
 display: flex;
 justify-content: center;
 margin: 10px 0 10px 0;
 `
 export const buttonCopiar = styled.button`
-  display: block;
+  display: none;
   background-color: #f0f0f0;
   color: #333;
   padding: 8px 16px;
@@ -180,4 +177,58 @@ export const buttonCopiar = styled.button`
   &:active{
     transform: scale(0.95); /* Efeito de clique */
   }
+`
+
+export const tooltip = styled.div`
+  display: none;
+  position: absolute;
+  top: 685px; /* sobe o tooltip */
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 8px;
+  border-radius: 4px;
+  max-width: 180px;
+  font-size: 12px;
+  z-index: 100;
+  white-space: normal;
+`
+
+export const spanHelp = styled.span`
+  display: none;
+  background-color:rgb(156, 194, 243);
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 22px;
+  margin-left: 8px;  
+ `
+
+export const divResultado = styled.div`
+  display: none;
+  border: 2px solid #4caf50;
+  background-color: #f0f8ff;
+  padding: 5px 10px 5px 10px;
+  border-radius: 8px;
+  width: fit-content;
+  margin: 10px auto;
+`
+export const resultDias = styled.small`
+
+  color: rgb(2, 95, 22);
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 1.5em;
+  
+  #spanDias{
+    color: red;
+    font-weight: bold;
+  }
+`
+
+export const resultPreco = styled.small`
+  color: red;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 30px;
 `

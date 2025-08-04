@@ -12,9 +12,7 @@ function App() {
    <>
    <GlobalStyle />
    <ProRata />
-   <Footer title="Datron Tecnologia. Todos os direitos reservados -" version="1.0.0"/>
-  
-            
+   <Footer title="Datron Tecnologia. Todos os direitos reservados -" version="5.6"/>            
    </>
   );
 }

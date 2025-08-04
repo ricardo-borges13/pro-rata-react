@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const FooterContainer = styled.footer`
+export const footerContainer = styled.footer`
 position: fixed;
   left: 0;
   width: 100%;
@@ -10,7 +10,7 @@ position: fixed;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
   bottom: 0;
 `
-export const Small = styled.small`
+export const smallFooter = styled.small`
 display: block;
   text-align: center;
   font-size: 12px;

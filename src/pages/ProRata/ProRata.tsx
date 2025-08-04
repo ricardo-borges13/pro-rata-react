@@ -3,18 +3,18 @@ import { Header } from "../../components/Header/Header";
 import logo from "../../assets/images/Logo Datron-BRANCO.png";
 import * as S from "./style.ProRata";
 
-export const ProRata = () => {
-  const versao = 5.6;
+
+export const ProRata = () => {  
   let dias = 0;
-  let result;
-  let diaInicial;
-  let mesInicial;
-  let anoInicial;
-  let diaFinal;
-  let mesFinal;
-  let anoFinal;
+  let resultado: number;
+  let diaInicial: number;
+  let mesInicial: number;
+  let anoInicial: number;
+  let diaFinal: number;
+  let mesFinal: number;
+  let anoFinal: number;
   let inputRad = document.getElementsByName(
-    "tipoPR"
+    "cobranca"
   ) as NodeListOf<HTMLInputElement>;
 
   function buscarCamposDate() {
@@ -34,12 +34,12 @@ export const ProRata = () => {
 
     const [anoI, mesI, diaI] = dataInputInicial.split("-");
     const [anoF, mesF, diaF] = dataInputFinal.split("-");
-    diaInicial = diaI;
-    mesInicial = mesI;
-    anoInicial = anoI;
-    diaFinal = diaF;
-    mesFinal = mesF;
-    anoFinal = anoF;
+    diaInicial = parseInt(diaI);
+    mesInicial = parseInt(mesI);
+    anoInicial = parseInt(anoI);
+    diaFinal = parseInt(diaF);
+    mesFinal = parseInt(mesF);
+    anoFinal = parseInt(anoF);   
   }
 
   function calcularDiferenca() {
@@ -58,9 +58,8 @@ export const ProRata = () => {
     const dataFinalStr = dataInputFinalElem.value;
 
     const dataInicial = new Date(dataInicialStr);
-    const dataFinal = new Date(dataFinalStr); 
-
-    buscarCamposDate();    
+    const dataFinal = new Date(dataFinalStr);
+    buscarCamposDate();
 
     if (isNaN(dataInicial.getTime()) || isNaN(dataFinal.getTime())) {
       alert("Por favor, insira datas válidas.");
@@ -68,7 +67,7 @@ export const ProRata = () => {
     }
 
     if (dataFinal < dataInicial) {
-      alert("A data final não poder anterior a data inicial");
+      alert("A data final não poder ser anterior a data inicial.");
       return;
     }
     // Calcula a diferença em milissegundos
@@ -85,9 +84,7 @@ export const ProRata = () => {
       dias += 1;
     }
     if (radio1.checked) {
-      if (dias === 0) {
-        dias = 1;
-      }
+      dias = dias === 0 ? 1 : dias;
     }
 
     calculoProRata();
@@ -95,6 +92,7 @@ export const ProRata = () => {
     // Exibe o resultado
     const result = document.getElementById("resultDias");
     if (result) {
+      result.style.display = "block";
       result.innerHTML =
         dias === 1
           ? `Período de Locação: <span id='spanDias'>  ${dias} dia </span>`
@@ -106,42 +104,94 @@ export const ProRata = () => {
     const inputValorElem = document.getElementById(
       "inputValor"
     ) as HTMLInputElement | null;
+    const resultPrecoElem = document.getElementById("resultPreco");
+    const divLimpar = document.querySelector(
+      "#buttonClean"
+    ) as HTMLElement | null;
+    const btnCalcular = document.getElementById("calculo");
+    const btnCopiar = document.querySelector(
+      ".btnCopiar"
+    ) as HTMLButtonElement | null;
+    const spanHelp = document.querySelector(".help") as HTMLElement | null;
+    const divResultado = document.querySelector(".divResultado") as HTMLDivElement | null;
+
     if (!inputValorElem) {
       alert("Erro calculoProRata. Input valor errado");
       return;
     }
+
     const valorTotal = parseFloat(inputValorElem.value.replace(",", "."));
+
+    //CONDIÇÃO SE O VALOR FOR NAN(NÃO FOR NÚMERO)
     if (isNaN(valorTotal)) {
-      const resultPrecoElem = document.getElementById("resultPreco") as HTMLElement | null;
       if (resultPrecoElem) {
         resultPrecoElem.style.display = "none";
       }
-      const divResultElem = document.querySelector(".divResult") as HTMLElement | null;
-      if (divResultElem) {
-        divResultElem.style.display = "block";
+      if (divLimpar) {       
+        divLimpar.style.display = "block";
+      }
+      if (btnCalcular) {
+        btnCalcular.innerHTML = `➩ Recalcular`;
+      }
+      if (btnCopiar) {
+        btnCopiar.style.display = "none";
+      }
+      if (spanHelp) {
+        spanHelp.style.display = "none";
+      }
+      if (divResultado) {
+        divResultado.style.display = "block";
       }
       return;
     }
 
-    // 'dias' deve estar definido no escopo externo
-    let resultado = (valorTotal / 30) * dias;
+    resultado = (valorTotal * dias) / 30;
 
+    // CONDIÇÃO IGUAL A ZERO
     if (resultado === 0) {
-      const divLimpar = document.querySelector(
-        ".divLimpar"
-      ) as HTMLElement | null;
+      if (resultPrecoElem) {
+        resultPrecoElem.style.display = "none";
+      }
       if (divLimpar) {
         divLimpar.style.display = "block";
-        divLimpar.classList.add("show");
+      }
+      if (btnCalcular) {
+        btnCalcular.innerHTML = `➩ Recalcular`;
+      }
+      if (btnCopiar) {
+        btnCopiar.style.display = "none";
+      }
+      if (spanHelp) {
+        spanHelp.style.display = "none";
+      }
+      if (divResultado) {
+        divResultado.style.display = "block";
       }
       return;
     }
 
-    const resultPrecoElem = document.getElementById("resultPreco");
+    // CONDIÇÃO MAIOR QUE ZERO
     if (resultPrecoElem) {
-      resultPrecoElem.innerText = `R$ ${resultado
+      if (divLimpar) {
+        divLimpar.style.display = "block";
+      }
+      if (btnCalcular) {
+        btnCalcular.innerHTML = `➩ Recalcular`;
+      }
+
+      resultPrecoElem.style.display = "block";
+      resultPrecoElem.innerHTML = `R$ ${resultado
         .toFixed(2)
         .replace(".", ",")}`;
+      if (btnCopiar) {
+        btnCopiar.style.display = "block";
+      }
+      if (spanHelp) {
+        spanHelp.style.display = "block";
+      }
+      if (divResultado) {
+        divResultado.style.display = "block";
+      }
     }
   }
 
@@ -149,24 +199,23 @@ export const ProRata = () => {
     const input = document.getElementById(
       "inputValor"
     ) as HTMLInputElement | null;
-    if (input && input.value) {
-      // Formata o valor para sempre ter 2 casas decimais
-      input.value = parseFloat(input.value.replace(",", "."))
-        .toFixed(2)
-        .replace(".", ",");
-    }
-    //ONBUR DO INPUT VALOR VAI RECEBER ESSA FUNÇÃO
+    if (input?.value) {
+      // Formcata o valor para sempre ter 2 casas decimais    
+      input.value = parseFloat(input.value).toFixed(2);
+    }   
   }
 
   function escolhaTipoProRata() {
-    const resultDiv = document.getElementById("cobrado");
+    const resultDiv = document.getElementById("cobrado"); //pega a informação de block ou none
+
     const radioElem = document.querySelector(
       'input[name="tipoPR"]:checked'
     ) as HTMLInputElement | null;
+
     const radio = radioElem ? radioElem.value : null;
 
     if (!resultDiv) {
-      console.error("Elemento com id 'cobrado' não encontrado.");
+      console.error("Erro função escolhaTipoProRata. Input NULL");
       return;
     }
 
@@ -176,21 +225,122 @@ export const ProRata = () => {
       resultDiv.style.display = "block";
     }
     // Sempre que o usuário mudar de "devolução" para "Aditivo" o "SIM" ficar marcado.
+    mudarValorInputCobranca();
+  }
 
-    if (inputRad.length >= 2 && inputRad[1].checked) {
+  function limparTela() {
+    const resultPreco = document.getElementById("resultPreco");
+    const resultDias = document.getElementById("resultDias");
+    const inputValor = document.getElementById(
+      "inputValor"
+    ) as HTMLInputElement | null;
+    const inpDataI = document.getElementById(
+      "InpDataI"
+    ) as HTMLInputElement | null;
+    const inpDataF = document.getElementById(
+      "InpDataF"
+    ) as HTMLInputElement | null;
+    const btnCalcular = document.getElementById("calculo");
+    const btnCopiar = document.querySelector(".btnCopiar") as HTMLButtonElement | null;
+    const help = document.querySelector(".help") as HTMLElement | null;
+    const divLimpar = document.querySelector("#buttonClean") as HTMLElement | null;
+    const divResultado = document.querySelector(".divResultado") as HTMLDivElement | null;
+
+    if (resultPreco) {
+      resultPreco.innerHTML = "";      
+    }
+    if (resultDias) {
+      resultDias.innerHTML = "";
+    }
+    if (inputValor) {
+      inputValor.value = "";
+    }
+    if (inpDataI) {
+      inpDataI.value = "";
+    }
+    if (inpDataF) {
+      inpDataF.value = "";
+    }
+    if (btnCalcular){
+      btnCalcular.innerHTML = "➩ Calcular";
+    }
+    if (btnCopiar){
+      btnCopiar.style.display = "none";
+    }
+    if (help){
+      help.style.display = "none";
+    }
+    if (divLimpar){
+      divLimpar.style.display = "none";
+    }
+    if (divResultado) {
+      divResultado.style.display = "none";
+    }
+    mudarValorInputCobranca();
+  }
+
+  function mudarValorInputCobranca() {
+    if (inputRad[1].checked) {
       inputRad[1].checked = false;
       inputRad[0].checked = true;
     }
   }
-
-  function limparTela() {
-    //divLimpar vai receber essa função
+  //Tem a função de mostrar o tooltip (help) ao clicar no ponto de interrogação
+  function toggleTooltip() {
+    const tooltip = document.getElementById("tooltip");
+    if (tooltip) {
+      tooltip.style.display =
+        tooltip.style.display === "block" ? "none" : "block";
+    }
   }
+
+  // Tem a função de esconder o tooltip (help) ao clicar fora do ponto de interrogação
+  document.addEventListener("click", function (e) {
+    const target = e.target as HTMLElement | null;
+    if (!target?.classList.contains("help")) {
+      const tooltip = document.getElementById("tooltip");
+      if (tooltip) {
+        tooltip.style.display = "none";
+      }
+    }
+  });
+
+  function copiarResultado() { 
+    const botaoCopiar = document.querySelector(".btnCopiar") as HTMLButtonElement | null;
+   
+    if (resultado) {    
+      const textoCompleto = `Valor proporcional correspondente a ${dias} dias de locação de "X" equipamentos de radiocomunicação, de ${diaInicial}/${mesInicial}/${anoInicial} a ${diaFinal}/${mesFinal}/${anoFinal} - Valor: R$ ${resultado.toFixed(2).replace(".", ",")}`;   
+
+      // copia para área de transferência
+      navigator.clipboard.writeText(textoCompleto)
+      .then(() => {
+        if (botaoCopiar){
+           botaoCopiar.innerHTML = "✔️ Copiado!"
+        }
+        setTimeout(() => {
+          if (botaoCopiar){
+            botaoCopiar.innerHTML = "📋 Copiar"
+         }
+        },2000)
+        
+      })
+     .catch((err) => {
+      console.error("Erro ao copiar: ", err);
+      setTimeout(() => {
+        if (botaoCopiar){
+          botaoCopiar.innerHTML = "📋 Copiar"
+       }
+      },2000)
+     })
+    }
+  }
+
+  
 
   return (
     <S.CenteredContainer>
       <S.Wrapper className="wrapper">
-        <Header image={logo} title="Cálculo Pro Rata" />
+        <Header image={logo} title="Cálculo Pro Rata - REACT" />
 
         <main className="main-container">
           <S.fieldsetContainer className="fieldset-container">
@@ -204,12 +354,18 @@ export const ProRata = () => {
                     type="radio"
                     name="tipoPR"
                     value="aditivo"
+                    onClick={escolhaTipoProRata}
                     defaultChecked
                   />
                   <span>Aditivo</span>
                 </label>
                 <label className="labelImput">
-                  <input type="radio" name="tipoPR" value="devolucao" />
+                  <input
+                    type="radio"
+                    name="tipoPR"
+                    value="devolucao"
+                    onClick={escolhaTipoProRata}
+                  />
                   <span>Devolução</span>
                 </label>
               </div>
@@ -236,7 +392,7 @@ export const ProRata = () => {
               name="valor"
               id="inputValor"
               step="0.01"
-              onBlur={() => {}}
+              onBlur={formatarDecimal}
               placeholder="0,00"
             />
           </S.divValor>
@@ -283,23 +439,33 @@ export const ProRata = () => {
             </S.myButon>
           </S.divButton>
 
-          <S.divButton className="divLimpar" onClick={() => {}}>
+          <S.divClean className="divLimpar" onClick={limparTela}>
             <S.buttonClean id="buttonClean">Limpar ✗</S.buttonClean>
-          </S.divButton>
+          </S.divClean>
 
-          <div className="divResultado">
-            <small id="resultDias"></small>
-            <small id="resultPreco"></small>
-          </div>
+          <S.divResultado className="divResultado">
+            <S.resultDias id="resultDias"></S.resultDias>
+            <S.resultPreco id="resultPreco"></S.resultPreco>
+          </S.divResultado>
 
           <S.divCopiar className="divCopiar">
-            <S.buttonCopiar
-              className="btnCopiar"
-              title="Este botão copia automaticamente os dados de período e valor, que serão incluídos na fatura do cliente."
-            >
+            <S.buttonCopiar className="btnCopiar" title="Copiar resultado." onClick={copiarResultado}>
               📋 Copiar
             </S.buttonCopiar>
-            <span className="help">❔</span>
+
+            <S.spanHelp
+              className="help"
+              onClick={toggleTooltip}
+              title="Este botão copia automaticamente os dados de período e valor, que serão incluídos na fatura do cliente."
+            >
+              {" "}
+              ❔{" "}
+            </S.spanHelp>
+
+            <S.tooltip id="tooltip">
+              Este botão copia automaticamente os dados de período e valor, que
+              serão incluídos na fatura do cliente.
+            </S.tooltip>
           </S.divCopiar>
         </main>
       </S.Wrapper>
