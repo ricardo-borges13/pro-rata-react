@@ -104,10 +104,7 @@ export const ProRata = () => {
     const inputValorElem = document.getElementById(
       "inputValor"
     ) as HTMLInputElement | null;
-    const resultPrecoElem = document.getElementById("resultPreco");
-    const divLimpar = document.querySelector(
-      "#buttonClean"
-    ) as HTMLElement | null;
+    const resultPrecoElem = document.getElementById("resultPreco"); 
     const btnCalcular = document.getElementById("calculo");
     const btnCopiar = document.querySelector(
       ".btnCopiar"
@@ -126,10 +123,7 @@ export const ProRata = () => {
     if (isNaN(valorTotal)) {
       if (resultPrecoElem) {
         resultPrecoElem.style.display = "none";
-      }
-      if (divLimpar) {       
-        divLimpar.style.display = "block";
-      }
+      }    
       if (btnCalcular) {
         btnCalcular.innerHTML = `➩ Recalcular`;
       }
@@ -145,16 +139,13 @@ export const ProRata = () => {
       return;
     }
 
-    resultado = (valorTotal * dias) / 30;
+    resultado = valorTotal * dias / 30;
 
     // CONDIÇÃO IGUAL A ZERO
     if (resultado === 0) {
       if (resultPrecoElem) {
         resultPrecoElem.style.display = "none";
-      }
-      if (divLimpar) {
-        divLimpar.style.display = "block";
-      }
+      }    
       if (btnCalcular) {
         btnCalcular.innerHTML = `➩ Recalcular`;
       }
@@ -171,10 +162,7 @@ export const ProRata = () => {
     }
 
     // CONDIÇÃO MAIOR QUE ZERO
-    if (resultPrecoElem) {
-      if (divLimpar) {
-        divLimpar.style.display = "block";
-      }
+    if (resultPrecoElem) {   
       if (btnCalcular) {
         btnCalcular.innerHTML = `➩ Recalcular`;
       }
@@ -219,11 +207,7 @@ export const ProRata = () => {
       return;
     }
 
-    if (radio === "aditivo") {
-      resultDiv.style.display = "none";
-    } else {
-      resultDiv.style.display = "block";
-    }
+    resultDiv.style.display = radio === "aditivo" ? "none" : "block";
     // Sempre que o usuário mudar de "devolução" para "Aditivo" o "SIM" ficar marcado.
     mudarValorInputCobranca();
   }
@@ -243,7 +227,7 @@ export const ProRata = () => {
     const btnCalcular = document.getElementById("calculo");
     const btnCopiar = document.querySelector(".btnCopiar") as HTMLButtonElement | null;
     const help = document.querySelector(".help") as HTMLElement | null;
-    const divLimpar = document.querySelector("#buttonClean") as HTMLElement | null;
+
     const divResultado = document.querySelector(".divResultado") as HTMLDivElement | null;
 
     if (resultPreco) {
@@ -269,10 +253,7 @@ export const ProRata = () => {
     }
     if (help){
       help.style.display = "none";
-    }
-    if (divLimpar){
-      divLimpar.style.display = "none";
-    }
+    } 
     if (divResultado) {
       divResultado.style.display = "none";
     }

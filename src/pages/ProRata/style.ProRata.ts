@@ -142,14 +142,15 @@ display: flex;
 justify-content: center;
 `
 
-export const buttonClean = styled.button`
-  display: none;
+export const buttonClean = styled.button`  
   cursor: pointer;  
   background-color: #17a2b8;
   border-radius: 8px;
   font-size: 15px;
   height: 23px;
-
+  width: 73px;
+  color: white;
+  border: none;
   &:hover{
     background-color: rgb(185, 247, 247);
   }
