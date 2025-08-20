@@ -2,6 +2,9 @@ import { Footer } from "../../components/Footer/Footer";
 import { Header } from "../../components/Header/Header";
 import logo from "../../assets/images/Logo Datron-BRANCO.png";
 import * as S from "./style.ProRata";
+import { formatarDecimal } from "../../utils/formataDecimal";
+import { calculoProRataUtil } from "../../utils/calculoValorProRata";
+import { diferencaDatas } from "../../utils/diferencaDatas";
 
 
 export const ProRata = () => {  
@@ -16,6 +19,13 @@ export const ProRata = () => {
   let inputRad = document.getElementsByName(
     "cobranca"
   ) as NodeListOf<HTMLInputElement>;
+
+  function mudarValorInputCobranca() {
+    if (inputRad[1].checked) {
+      inputRad[1].checked = false;
+      inputRad[0].checked = true;
+    }
+  }
 
   function buscarCamposDate() {
     const dataInputInicialElem = document.getElementById(
@@ -39,7 +49,7 @@ export const ProRata = () => {
     anoInicial = parseInt(anoI);
     diaFinal = parseInt(diaF);
     mesFinal = parseInt(mesF);
-    anoFinal = parseInt(anoF);   
+    anoFinal = parseInt(anoF);      
   }
 
   function calcularDiferenca() {
@@ -59,7 +69,7 @@ export const ProRata = () => {
 
     const dataInicial = new Date(dataInicialStr);
     const dataFinal = new Date(dataFinalStr);
-    buscarCamposDate();
+    
 
     if (isNaN(dataInicial.getTime()) || isNaN(dataFinal.getTime())) {
       alert("Por favor, insira datas válidas.");
@@ -70,8 +80,11 @@ export const ProRata = () => {
       alert("A data final não poder ser anterior a data inicial.");
       return;
     }
+
+    buscarCamposDate();
+
     // Calcula a diferença em milissegundos
-    const diferenca = Math.abs(dataFinal.getTime() - dataInicial.getTime());
+    const diferenca = diferencaDatas({dataFinal, dataInicial})
 
     // Converte a diferença para dias
     dias = Math.ceil(diferenca / (1000 * 60 * 60 * 24));
@@ -139,7 +152,8 @@ export const ProRata = () => {
       return;
     }
 
-    resultado = valorTotal * dias / 30;
+    // resultado = valorTotal * dias / 30;
+    resultado = calculoProRataUtil({ valorTotal, dias });
 
     // CONDIÇÃO IGUAL A ZERO
     if (resultado === 0) {
@@ -183,16 +197,7 @@ export const ProRata = () => {
     }
   }
 
-  function formatarDecimal() {
-    const input = document.getElementById(
-      "inputValor"
-    ) as HTMLInputElement | null;
-    if (input?.value) {
-      // Formcata o valor para sempre ter 2 casas decimais    
-      input.value = parseFloat(input.value).toFixed(2);
-    }   
-  }
-
+ 
   function escolhaTipoProRata() {
     const resultDiv = document.getElementById("cobrado"); //pega a informação de block ou none
 
@@ -260,12 +265,7 @@ export const ProRata = () => {
     mudarValorInputCobranca();
   }
 
-  function mudarValorInputCobranca() {
-    if (inputRad[1].checked) {
-      inputRad[1].checked = false;
-      inputRad[0].checked = true;
-    }
-  }
+  
   //Tem a função de mostrar o tooltip (help) ao clicar no ponto de interrogação
   function toggleTooltip() {
     const tooltip = document.getElementById("tooltip");
