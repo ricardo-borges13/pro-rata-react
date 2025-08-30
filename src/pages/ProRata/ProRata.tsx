@@ -5,7 +5,7 @@ import * as S from "./style.ProRata";
 import { formatarDecimal } from "../../utils/formataDecimal";
 import { calculoProRataUtil } from "../../utils/calculoValorProRata";
 import { diferencaDatas } from "../../utils/diferencaDatas";
-import { useState } from "react";
+import { JSX, useState } from "react";
 
 
 export const ProRata = () => {  
@@ -54,7 +54,7 @@ export const ProRata = () => {
   }
   const[inpDatI, setInpDatI] = useState("");
   const[inpDatF, setInpDataF] = useState("");
-  const[resultDias, setResultDias] = useState("Resultado")
+  const[resultDias, setResultDias] = useState<JSX.Element | null>(null)
   function calcularDiferenca() {
     const resultRad = document.getElementsByName("cobranca");
   
@@ -96,10 +96,14 @@ export const ProRata = () => {
 
     // Exibe o resultado
  
-    if (resultDias) {      
-      setResultDias(dias === 1
-          ? `Período de Locação:  ${dias} dia `
-          : `Período de Locação:  ${dias} dias `)
+    if (dias) {      
+      setResultDias(
+        dias === 1 ? (
+          <>Período de Locação: <span id="spanDias">{dias} dia</span></>
+        ) : (
+          <>Período de Locação: <span id="spanDias">{dias} dias</span></>
+        )
+      );
     }
   }
 
@@ -417,7 +421,7 @@ export const ProRata = () => {
           <S.divResultado className="divResultado">
             <S.resultDias id="resultDias"></S.resultDias>
             <S.resultPreco id="resultPreco"></S.resultPreco>
-            <div>{resultDias}</div>
+            <S.resultDias>{resultDias}</S.resultDias>
           </S.divResultado>
 
           <S.divCopiar className="divCopiar">
