@@ -5,6 +5,7 @@ import * as S from "./style.ProRata";
 import { formatarDecimal } from "../../utils/formataDecimal";
 import { calculoProRataUtil } from "../../utils/calculoValorProRata";
 import { diferencaDatas } from "../../utils/diferencaDatas";
+import { useState } from "react";
 
 
 export const ProRata = () => {  
@@ -51,24 +52,14 @@ export const ProRata = () => {
     mesFinal = parseInt(mesF);
     anoFinal = parseInt(anoF);      
   }
-
+  const[inpDatI, setInpDatI] = useState("");
+  const[inpDatF, setInpDataF] = useState("");
   function calcularDiferenca() {
     const resultRad = document.getElementsByName("cobranca");
-    const dataInputInicialElem = document.getElementById(
-      "InpDataI"
-    ) as HTMLInputElement | null;
-    const dataInputFinalElem = document.getElementById(
-      "InpDataF"
-    ) as HTMLInputElement | null;
-    if (!dataInputInicialElem || !dataInputFinalElem) {
-      alert("Erro função calcularDiferença input Data");
-      return;
-    }
-    const dataInicialStr = dataInputInicialElem.value;
-    const dataFinalStr = dataInputFinalElem.value;
+  
 
-    const dataInicial = new Date(dataInicialStr);
-    const dataFinal = new Date(dataFinalStr);
+    const dataInicial = new Date(inpDatI);
+    const dataFinal = new Date(inpDatF);
     
 
     if (isNaN(dataInicial.getTime()) || isNaN(dataFinal.getTime())) {
@@ -356,11 +347,11 @@ export const ProRata = () => {
           <S.divData className="divData">
             <S.divDataIF className="dataI">
               <label htmlFor="DataI">Data Inicial</label>
-              <S.inputDate type="date" id="InpDataI" />
+              <S.inputDate type="date" id="InpDataI" value={inpDatI} onChange={(e)=>setInpDatI(e.target.value)}/>
             </S.divDataIF>
             <S.divDataIF className="dataF">
               <label htmlFor="Data">Data Final</label>
-              <S.inputDate type="date" id="InpDataF" />
+              <S.inputDate type="date" id="InpDataF" value={inpDatF} onChange={(e)=>setInpDataF(e.target.value)} />
             </S.divDataIF>
           </S.divData>
 
