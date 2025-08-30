@@ -54,6 +54,7 @@ export const ProRata = () => {
   }
   const[inpDatI, setInpDatI] = useState("");
   const[inpDatF, setInpDataF] = useState("");
+  const[resultDias, setResultDias] = useState("Resultado")
   function calcularDiferenca() {
     const resultRad = document.getElementsByName("cobranca");
   
@@ -94,13 +95,11 @@ export const ProRata = () => {
     calculoProRata();
 
     // Exibe o resultado
-    const result = document.getElementById("resultDias");
-    if (result) {
-      result.style.display = "block";
-      result.innerHTML =
-        dias === 1
-          ? `Período de Locação: <span id='spanDias'>  ${dias} dia </span>`
-          : `Período de Locação: <span id='spanDias'>  ${dias} dias </span>`;
+ 
+    if (resultDias) {      
+      setResultDias(dias === 1
+          ? `Período de Locação:  ${dias} dia `
+          : `Período de Locação:  ${dias} dias `)
     }
   }
 
@@ -418,6 +417,7 @@ export const ProRata = () => {
           <S.divResultado className="divResultado">
             <S.resultDias id="resultDias"></S.resultDias>
             <S.resultPreco id="resultPreco"></S.resultPreco>
+            <div>{resultDias}</div>
           </S.divResultado>
 
           <S.divCopiar className="divCopiar">
