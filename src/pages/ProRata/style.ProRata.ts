@@ -85,7 +85,7 @@ font-size: 17px;
   transition: all 0.2s ease;
 `
 export const divRadio = styled.div`
-display: none;
+
 font-size: 9px;
 `
 
@@ -162,7 +162,7 @@ justify-content: center;
 margin: 10px 0 10px 0;
 `
 export const buttonCopiar = styled.button`
-  display: none;
+
   background-color: #f0f0f0;
   color: #333;
   padding: 8px 16px;
@@ -181,7 +181,7 @@ export const buttonCopiar = styled.button`
 `
 
 export const tooltip = styled.div`
-  display: none;
+
   position: absolute;
   top: 685px; /* sobe o tooltip */
   left: 50%;
@@ -197,7 +197,7 @@ export const tooltip = styled.div`
 `
 
 export const spanHelp = styled.span`
-  display: none;
+
   background-color:rgb(156, 194, 243);
   border-radius: 50px;
   cursor: pointer;
@@ -206,7 +206,8 @@ export const spanHelp = styled.span`
  `
 
 export const divResultado = styled.div`
-  display: none;
+  display: flex;
+ flex-direction: column;
   border: 2px solid #4caf50;
   background-color: #f0f8ff;
   padding: 5px 10px 5px 10px;

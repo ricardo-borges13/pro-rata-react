@@ -5,7 +5,7 @@ import * as S from "./style.ProRata";
 import { formatarDecimal } from "../../utils/formataDecimal";
 import { calculoProRataUtil } from "../../utils/calculoValorProRata";
 import { diferencaDatas } from "../../utils/diferencaDatas";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const ProRata = () => {
   
@@ -29,9 +29,9 @@ export const ProRata = () => {
   const [inpDatF, setInpDataF] = useState("");
   const [resultDias, setResultDias] = useState(0);
   const [showResultado, setShowResultado] = useState(false);
-  const [showResulPreco, setShowResultPreco] = useState(false);
+  const [showResultPreco, setShowResultPreco] = useState(false);
 const [showCopiar, setShowCopiar] = useState(false);
-const [btnText, setBtnText] = useState("➩ Calcular");
+
 
   function mudarValorInputCobranca() {
     if (inputRad[1].checked) {
@@ -95,94 +95,20 @@ const [btnText, setBtnText] = useState("➩ Calcular");
   }
 
   
-  function calculoProRata() {
-    const resultPrecoElem = document.getElementById("resultPreco");
-    const btnCalcular = document.getElementById("calculo");
-    const btnCopiar = document.querySelector(
-      ".btnCopiar"
-    ) as HTMLButtonElement | null;
-    const spanHelp = document.querySelector(".help") as HTMLElement | null;
-    const divResultado = document.querySelector(
-      ".divResultado"
-    ) as HTMLDivElement | null;    
-    
-    // const valorTotal = parseFloat(inputValor.valueOf.replace(",", "."));
+  function calculoProRata() {   
     const valorTotal = inputValor
 
-    //CONDIÇÃO SE O VALOR FOR NAN(NÃO FOR NÚMERO)
-    if ((Number(inputValor) === 0) || (inputValor === "")) {
-      if (resultPrecoElem) {
-        resultPrecoElem.style.display = "none";
-      }
-      if (btnCalcular) {
-        btnCalcular.innerHTML = `➩ Recalcular`;
-      }
-      if (btnCopiar) {
-        btnCopiar.style.display = "none";
-      }
-      if (spanHelp) {
-        spanHelp.style.display = "none";
-      }
-      if (divResultado) {
-        divResultado.style.display = "block";
-      }
+    if ((Number(inputValor) === 0) || (inputValor === "")) {  
+      setShowResultado(true);    
       return;
     }
-
-    // resultado = valorTotal * dias / 30;
-    // if (valorTotal === undefined) {
-    //   alert("Erro calculoProRata. Input valor errado");
-    //   return;
-    // }
     
     const resultadoProRata = calculoProRataUtil({ valorTotal: Number(valorTotal), dias }) ;
-    setResultadoProRata(resultadoProRata)
+    setResultadoProRata(resultadoProRata);
 
-    // CONDIÇÃO IGUAL A ZERO
-    if (resultadoProRata === 0) {
-      if (resultPrecoElem) {
-        resultPrecoElem.style.display = "none";
-      }
-      if (btnCalcular) {
-        btnCalcular.innerHTML = `➩ Recalcular`;
-      }
-      if (btnCopiar) {
-        btnCopiar.style.display = "none";
-      }
-      if (spanHelp) {
-        spanHelp.style.display = "none";
-      }
-      if (divResultado) {
-        divResultado.style.display = "block";
-      }
-      return;
-    }
-
-    // CONDIÇÃO MAIOR QUE ZERO
-    if (resultPrecoElem) {
-      if (btnCalcular) {
-        btnCalcular.innerHTML = `➩ Recalcular`;
-      }
-
-      resultPrecoElem.style.display = "block";
-      if (resultadoProRata) {       
-        resultPrecoElem.innerHTML = `R$ ${resultadoProRata
-          .toFixed(2)
-          .replace(".", ",")}`
-      }
-      
-      if (btnCopiar) {
-        btnCopiar.style.display = "block";
-      }
-      if (spanHelp) {
-        spanHelp.style.display = "block";
-      }
-      if (divResultado) {
-        divResultado.style.display = "block";
-      }
-    }
     setShowResultado(true);
-    setShowResultPreco(true)
+    setShowResultPreco(true);
+    setShowCopiar(true);       
   }
 
   function escolhaTipoProRata() {
@@ -209,32 +135,52 @@ const [btnText, setBtnText] = useState("➩ Calcular");
   function limparTela() {
     setInpDatI("");
     setInpDataF("");
-    setInputValor("");    
-    setBtnText("➩ Calcular");
+    setInputValor("");      
     setShowCopiar(false);
     setShowResultado(false);  
+    setShowResultPreco(false);
+    setResultadoProRata(undefined);
     mudarValorInputCobranca();
   }
-
+  const[tooltip, setTooltip] = useState(' Este botão copia automaticamente os dados de período e valor, que serão incluídos na fatura do cliente.');
+  const[showTooltip, setShowTooltip] = useState(false);
   //Tem a função de mostrar o tooltip (help) ao clicar no ponto de interrogação
-  function toggleTooltip() {
-    const tooltip = document.getElementById("tooltip");
-    if (tooltip) {
-      tooltip.style.display =
-        tooltip.style.display === "block" ? "none" : "block";
-    }
-  }
+  // function toggleTooltip() {    
+  //   setShowTooltip(() => !showTooltip)
+  // }
 
   // Tem a função de esconder o tooltip (help) ao clicar fora do ponto de interrogação
-  document.addEventListener("click", function (e) {
-    const target = e.target as HTMLElement | null;
-    if (!target?.classList.contains("help")) {
-      const tooltip = document.getElementById("tooltip");
-      if (tooltip) {
-        tooltip.style.display = "none";
-      }
+  // document.addEventListener("click", function (e) {
+  //   const target = e.target as HTMLElement | null;
+  //   if (!target?.classList.contains("help")) {
+  //     const tooltip = document.getElementById("tooltip");
+  //     if (tooltip) {
+  //       tooltip.style.display = "none";
+  //     }
+  //   }
+  // });
+
+    // Alterna a visibilidade do tooltip ao clicar no ponto de interrogação
+    function toggleTooltip(e: React.MouseEvent) {
+      e.stopPropagation(); // evita que o clique feche imediatamente
+      setShowTooltip(() => !showTooltip)
     }
-  });
+  
+    // Esconde o tooltip ao clicar fora
+    useEffect(() => {
+      function handleClickOutside(e: MouseEvent) {
+        const target = e.target as HTMLElement;
+        if (!target.closest(".help")) {
+          setShowTooltip(false);
+        }
+      }
+  
+      document.addEventListener("click", handleClickOutside);
+      return () => {
+        document.removeEventListener("click", handleClickOutside);
+      };
+    }, []);
+  
 
   function copiarResultado() {
     const botaoCopiar = document.querySelector(
@@ -380,7 +326,7 @@ const [btnText, setBtnText] = useState("➩ Calcular");
               className="myButton"
               onClick={calcularDiferenca}
             >
-              {btnText}
+             ➩ Calcular
             </S.myButon>
           </S.divButton>
 
@@ -389,9 +335,10 @@ const [btnText, setBtnText] = useState("➩ Calcular");
           </S.divClean>
           {showResultado && (
             <S.divResultado className="divResultado">
-           {showResulPreco &&(
-             <S.resultPreco id="resultPreco"></S.resultPreco>
+           {showResultPreco && (
+            <S.resultPreco id="resultPreco">R$ {resultadoProRata?.toFixed(2).replace(".",",")}</S.resultPreco> 
            )}
+                      
            
             <S.resultDias>
               {resultDias > 0 && (
@@ -405,36 +352,36 @@ const [btnText, setBtnText] = useState("➩ Calcular");
             </S.resultDias>
           </S.divResultado>
           )}
-          resultPreco
+          
+          {showCopiar && (
+            <S.divCopiar className="divCopiar">           
+            <S.buttonCopiar
+            className="btnCopiar"
+            title="Copiar resultado."
+            onClick={copiarResultado}
+          >              
+            📋 Copiar
+          </S.buttonCopiar>          
+             <S.spanHelp
+             className="help"
+             onClick={toggleTooltip}
+             title="Este botão copia automaticamente os dados de período e valor, que serão incluídos na fatura do cliente."
+           >
+             {" "}
+             ❔{" "}
+           </S.spanHelp >  
 
-          <S.divCopiar className="divCopiar">
-            {showCopiar && (
-              <S.buttonCopiar
-              className="btnCopiar"
-              title="Copiar resultado."
-              onClick={copiarResultado}
-            >              
-              📋 Copiar
-            </S.buttonCopiar>
+            {showTooltip && (
+               <S.tooltip onClick={toggleTooltip} id="tooltip">
+               {tooltip}
+             </S.tooltip> 
             )}
-            
-            {showResultado && (
-               <S.spanHelp
-               className="help"
-               onClick={toggleTooltip}
-               title="Este botão copia automaticamente os dados de período e valor, que serão incluídos na fatura do cliente."
-             >
-               {" "}
-               ❔{" "}
-             </S.spanHelp>
-            )}
-           
+                     
+        </S.divCopiar>
+          )}
+          
 
-            <S.tooltip id="tooltip">
-              Este botão copia automaticamente os dados de período e valor, que
-              serão incluídos na fatura do cliente.
-            </S.tooltip>
-          </S.divCopiar>
+
         </main>
       </S.Wrapper>
     </S.CenteredContainer>
