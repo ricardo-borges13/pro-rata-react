@@ -8,6 +8,7 @@ import { diferencaDatas } from "../../utils/diferencaDatas";
 import { useState } from "react";
 
 export const ProRata = () => {
+  
   let dias = 0;
   const[resultadoProRata, setResultadoProRata] = useState<number | undefined>(undefined);
   const[resultData, setResultData] = useState({
@@ -18,6 +19,7 @@ export const ProRata = () => {
     mesFinal:0,
     anoFinal:0,      
   });
+  const[inputValor, setInputValor] = useState("")
   
   let inputRad = document.getElementsByName(
     "cobranca"
@@ -26,6 +28,10 @@ export const ProRata = () => {
   const [inpDatI, setInpDatI] = useState("");
   const [inpDatF, setInpDataF] = useState("");
   const [resultDias, setResultDias] = useState(0);
+  const [showResultado, setShowResultado] = useState(false);
+  const [showResulPreco, setShowResultPreco] = useState(false);
+const [showCopiar, setShowCopiar] = useState(false);
+const [btnText, setBtnText] = useState("➩ Calcular");
 
   function mudarValorInputCobranca() {
     if (inputRad[1].checked) {
@@ -51,7 +57,7 @@ export const ProRata = () => {
 
   function calcularDiferenca() {
     const resultRad = document.getElementsByName("cobranca");
-
+   
     const dataInicial = new Date(inpDatI);
     const dataFinal = new Date(inpDatF);
 
@@ -88,7 +94,7 @@ export const ProRata = () => {
     setResultDias(dias);
   }
 
-  const[inputValor, setInputValor] = useState<number | undefined>(undefined)
+  
   function calculoProRata() {
     const resultPrecoElem = document.getElementById("resultPreco");
     const btnCalcular = document.getElementById("calculo");
@@ -104,7 +110,7 @@ export const ProRata = () => {
     const valorTotal = inputValor
 
     //CONDIÇÃO SE O VALOR FOR NAN(NÃO FOR NÚMERO)
-    if ((inputValor === 0) || (inputValor === undefined)) {
+    if ((Number(inputValor) === 0) || (inputValor === "")) {
       if (resultPrecoElem) {
         resultPrecoElem.style.display = "none";
       }
@@ -124,12 +130,12 @@ export const ProRata = () => {
     }
 
     // resultado = valorTotal * dias / 30;
-    if (valorTotal === undefined) {
-      alert("Erro calculoProRata. Input valor errado");
-      return;
-    }
+    // if (valorTotal === undefined) {
+    //   alert("Erro calculoProRata. Input valor errado");
+    //   return;
+    // }
     
-    const resultadoProRata = calculoProRataUtil({ valorTotal, dias }) ;
+    const resultadoProRata = calculoProRataUtil({ valorTotal: Number(valorTotal), dias }) ;
     setResultadoProRata(resultadoProRata)
 
     // CONDIÇÃO IGUAL A ZERO
@@ -175,6 +181,8 @@ export const ProRata = () => {
         divResultado.style.display = "block";
       }
     }
+    setShowResultado(true);
+    setShowResultPreco(true)
   }
 
   function escolhaTipoProRata() {
@@ -196,55 +204,15 @@ export const ProRata = () => {
     mudarValorInputCobranca();
   }
 
+
+
   function limparTela() {
-    const resultPreco = document.getElementById("resultPreco");
-    const resultDias = document.getElementById("resultDias");
-    const inputValor = document.getElementById(
-      "inputValor"
-    ) as HTMLInputElement | null;
-    const inpDataI = document.getElementById(
-      "InpDataI"
-    ) as HTMLInputElement | null;
-    const inpDataF = document.getElementById(
-      "InpDataF"
-    ) as HTMLInputElement | null;
-    const btnCalcular = document.getElementById("calculo");
-    const btnCopiar = document.querySelector(
-      ".btnCopiar"
-    ) as HTMLButtonElement | null;
-    const help = document.querySelector(".help") as HTMLElement | null;
-
-    const divResultado = document.querySelector(
-      ".divResultado"
-    ) as HTMLDivElement | null;
-
-    if (resultPreco) {
-      resultPreco.innerHTML = "";
-    }
-    if (resultDias) {
-      resultDias.innerHTML = "";
-    }
-    if (inputValor) {
-      inputValor.value = "";
-    }
-    if (inpDataI) {
-      inpDataI.value = "";
-    }
-    if (inpDataF) {
-      inpDataF.value = "";
-    }
-    if (btnCalcular) {
-      btnCalcular.innerHTML = "➩ Calcular";
-    }
-    if (btnCopiar) {
-      btnCopiar.style.display = "none";
-    }
-    if (help) {
-      help.style.display = "none";
-    }
-    if (divResultado) {
-      divResultado.style.display = "none";
-    }
+    setInpDatI("");
+    setInpDataF("");
+    setInputValor("");    
+    setBtnText("➩ Calcular");
+    setShowCopiar(false);
+    setShowResultado(false);  
     mudarValorInputCobranca();
   }
 
@@ -370,7 +338,7 @@ export const ProRata = () => {
               onBlur={formatarDecimal}
               placeholder="0,00"
               value={inputValor}
-              onChange={(e)=>setInputValor(Number(e.target.value))}
+              onChange={(e)=>setInputValor(e.target.value)}
             />
           </S.divValor>
 
@@ -412,17 +380,19 @@ export const ProRata = () => {
               className="myButton"
               onClick={calcularDiferenca}
             >
-              ➩ Calcular
+              {btnText}
             </S.myButon>
           </S.divButton>
 
           <S.divClean className="divLimpar" onClick={limparTela}>
             <S.buttonClean id="buttonClean">Limpar ✗</S.buttonClean>
           </S.divClean>
-
-          <S.divResultado className="divResultado">
-            <S.resultDias id="resultDias"></S.resultDias>
-            <S.resultPreco id="resultPreco"></S.resultPreco>
+          {showResultado && (
+            <S.divResultado className="divResultado">
+           {showResulPreco &&(
+             <S.resultPreco id="resultPreco"></S.resultPreco>
+           )}
+           
             <S.resultDias>
               {resultDias > 0 && (
                 <>
@@ -434,24 +404,31 @@ export const ProRata = () => {
               )}
             </S.resultDias>
           </S.divResultado>
+          )}
+          resultPreco
 
           <S.divCopiar className="divCopiar">
-            <S.buttonCopiar
+            {showCopiar && (
+              <S.buttonCopiar
               className="btnCopiar"
               title="Copiar resultado."
               onClick={copiarResultado}
-            >
+            >              
               📋 Copiar
             </S.buttonCopiar>
-
-            <S.spanHelp
-              className="help"
-              onClick={toggleTooltip}
-              title="Este botão copia automaticamente os dados de período e valor, que serão incluídos na fatura do cliente."
-            >
-              {" "}
-              ❔{" "}
-            </S.spanHelp>
+            )}
+            
+            {showResultado && (
+               <S.spanHelp
+               className="help"
+               onClick={toggleTooltip}
+               title="Este botão copia automaticamente os dados de período e valor, que serão incluídos na fatura do cliente."
+             >
+               {" "}
+               ❔{" "}
+             </S.spanHelp>
+            )}
+           
 
             <S.tooltip id="tooltip">
               Este botão copia automaticamente os dados de período e valor, que
