@@ -88,7 +88,6 @@ export const ProRata = () => {
       dias,
     });
     setResultadoProRata(resultadoProRata);
-
     setShowResultado(true);
     setShowResultPreco(true);
     setShowCopiar(true);
