@@ -1,6 +1,6 @@
 import { Footer } from "../../components/Footer/Footer";
 import { Header } from "../../components/Header/Header";
-import logo from "../../assets/images/Enviar ricardo.png";
+import logo from "../../assets/images/Logo Datron-BRANCO.png";
 import * as S from "./style.ProRata";
 import { formatarDecimal } from "../../utils/formataDecimal";
 import { calculoProRataUtil } from "../../utils/calculoValorProRata";
@@ -227,7 +227,7 @@ export const ProRata = () => {
               name="valor"
               id="inputValor"
               step="0.01"
-              onBlur={formatarDecimal}
+              onBlur={() => setInputValor(formatarDecimal(inputValor))}
               placeholder="0,00"
               value={inputValor}
               onChange={(e) => setInputValor(e.target.value)}
