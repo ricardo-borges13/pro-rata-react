@@ -8,33 +8,34 @@ import { diferencaDatas } from "../../utils/diferencaDatas";
 import { useEffect, useState } from "react";
 
 export const ProRata = () => {
-  
   let dias = 0;
-  const[resultadoProRata, setResultadoProRata] = useState<number | undefined>(undefined);
-  const[resultData, setResultData] = useState({
-    diaInicial:0,
-    mesInicial:0,
-    anoInicial:0,
-    diaFinal:0,
-    mesFinal:0,
-    anoFinal:0,      
+  const [resultadoProRata, setResultadoProRata] = useState<number | undefined>(
+    undefined
+  );
+  const [resultData, setResultData] = useState({
+    diaInicial: 0,
+    mesInicial: 0,
+    anoInicial: 0,
+    diaFinal: 0,
+    mesFinal: 0,
+    anoFinal: 0,
   });
-  const[inputValor, setInputValor] = useState("")
-  const[cobrancaDia, setCobrancaDia] = useState('sim')
+  const [inputValor, setInputValor] = useState("");
+  const [cobrancaDia, setCobrancaDia] = useState("sim");
   const [inpDatI, setInpDatI] = useState("");
   const [inpDatF, setInpDataF] = useState("");
   const [resultDias, setResultDias] = useState(0);
   const [showResultado, setShowResultado] = useState(false);
   const [showResultPreco, setShowResultPreco] = useState(false);
-const [showCopiar, setShowCopiar] = useState(false);
-const[tipoProRata, setTipoProRata] = useState('aditivo')
-
+  const [showCopiar, setShowCopiar] = useState(false);
+  const [tipoProRata, setTipoProRata] = useState("aditivo");
+  const [tooltip, setTooltip] = useState(
+    " Este botão copia automaticamente os dados de período e valor, que serão incluídos na fatura do cliente."
+  );
+  const [showTooltip, setShowTooltip] = useState(false);
+  const[textButCopiar, setTextButCopiar] = useState('📋 Copiar')
 
   function buscarCamposDate() {
-    if (!inpDatI || !inpDatF) {
-      throw new Error("Os campos de data não foram encontrados.");
-    }  
- 
     const [anoI, mesI, diaI] = inpDatI.split("-");
     const [anoF, mesF, diaF] = inpDatF.split("-");
     resultData.diaInicial = parseInt(diaI);
@@ -45,7 +46,7 @@ const[tipoProRata, setTipoProRata] = useState('aditivo')
     resultData.anoFinal = parseInt(anoF);
   }
 
-  function calcularDiferenca() {   
+  function calcularDiferenca() {
     const dataInicial = new Date(inpDatI);
     const dataFinal = new Date(inpDatF);
 
@@ -58,109 +59,102 @@ const[tipoProRata, setTipoProRata] = useState('aditivo')
       alert("A data final não poder ser anterior a data inicial.");
       return;
     }
-
-    buscarCamposDate();
-
     // Calcula a diferença em milissegundos
     const diferenca = diferencaDatas({ dataFinal, dataInicial });
 
     // Converte a diferença para dias
-    dias = Math.ceil(diferenca / (1000 * 60 * 60 * 24)); 
+    dias = Math.ceil(diferenca / (1000 * 60 * 60 * 24));
 
-    if (cobrancaDia === 'sim') {
+    if (cobrancaDia === "sim") {
       dias += 1;
     }
-    if (cobrancaDia === 'nao') {
+    if (cobrancaDia === "nao") {
       dias = dias === 0 ? 1 : dias;
     }
     calculoProRata();
     setResultDias(dias);
   }
 
-  
-  function calculoProRata() {   
-    const valorTotal = inputValor
+  function calculoProRata() {
+    const valorTotal = inputValor;
 
-    if ((Number(inputValor) === 0) || (inputValor === "")) {  
-      setShowResultado(true);    
+    if (Number(inputValor) === 0 || inputValor === "") {
+      setShowResultado(true);
       return;
     }
-    
-    const resultadoProRata = calculoProRataUtil({ valorTotal: Number(valorTotal), dias }) ;
+
+    const resultadoProRata = calculoProRataUtil({
+      valorTotal: Number(valorTotal),
+      dias,
+    });
     setResultadoProRata(resultadoProRata);
 
     setShowResultado(true);
     setShowResultPreco(true);
-    setShowCopiar(true);       
+    setShowCopiar(true);
+    buscarCamposDate();
   }
 
-
- 
-
-
-   function limparTela() {
+  function limparTela() {
     setInpDatI("");
     setInpDataF("");
-    setInputValor("");      
+    setInputValor("");
     setShowCopiar(false);
-    setShowResultado(false);  
+    setShowResultado(false);
     setShowResultPreco(false);
     setResultadoProRata(undefined);
-    setCobrancaDia('sim');
+    setCobrancaDia("sim");
   }
-  const[tooltip, setTooltip] = useState(' Este botão copia automaticamente os dados de período e valor, que serão incluídos na fatura do cliente.');
-  const[showTooltip, setShowTooltip] = useState(false);
 
-    // Alterna a visibilidade do tooltip ao clicar no ponto de interrogação
-    function toggleTooltip(e: React.MouseEvent) {
-      e.stopPropagation(); // evita que o clique feche imediatamente
-      setShowTooltip(() => !showTooltip)
-    }
-  
-    // Esconde o tooltip ao clicar fora
-    useEffect(() => {
-      function handleClickOutside(e: MouseEvent) {
-        const target = e.target as HTMLElement;
-        if (!target.closest(".help")) {
-          setShowTooltip(false);
-        }
+  // Alterna a visibilidade do tooltip ao clicar no ponto de interrogação
+  function toggleTooltip(e: React.MouseEvent) {
+    e.stopPropagation(); // evita que o clique feche imediatamente
+    setShowTooltip(() => !showTooltip);
+  }
+
+  // Esconde o tooltip ao clicar fora
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      if (!target.closest(".help")) {
+        setShowTooltip(false);
       }
-  
-      document.addEventListener("click", handleClickOutside);
-      return () => {
-        document.removeEventListener("click", handleClickOutside);
-      };
-    }, []);
-  
+    }
 
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+ 
   function copiarResultado() {
-    const botaoCopiar = document.querySelector(
-      ".btnCopiar"
-    ) as HTMLButtonElement | null;
-
-    if (resultadoProRata) {
-      const textoCompleto = `Valor proporcional correspondente a ${dias} dias de locação de "X" equipamentos de radiocomunicação, de ${resultData.diaInicial}/${resultData.mesInicial}/${resultData.anoInicial} a ${resultData.diaFinal}/${resultData.mesFinal}/${resultData.anoFinal} - Valor: R$ ${resultadoProRata
-        .toFixed(2)
-        .replace(".", ",")}`;
+      if (resultadoProRata) {
+      const textoCompleto = `Valor proporcional correspondente a ${resultDias} dias de locação de "X" equipamentos de radiocomunicação, de ${
+        resultData.diaInicial
+      }/${resultData.mesInicial}/${resultData.anoInicial} a ${
+        resultData.diaFinal
+      }/${resultData.mesFinal}/${
+        resultData.anoFinal
+      } - Valor: R$ ${resultadoProRata.toFixed(2).replace(".", ",")}`;
 
       // copia para área de transferência
       navigator.clipboard
         .writeText(textoCompleto)
         .then(() => {
-          if (botaoCopiar) {
-            botaoCopiar.innerHTML = "✔️ Copiado!";
+          if (textButCopiar) {           
+            setTextButCopiar("✔️ Copiado!");
           }
           setTimeout(() => {
-            if (botaoCopiar) {
-              botaoCopiar.innerHTML = "📋 Copiar";
+            if (textButCopiar) {              
+              setTextButCopiar("📋 Copiar");              
             }
           }, 2000);
         })
         .catch((err) => {
           console.error("Erro ao copiar: ", err);
           setTimeout(() => {
-            if (botaoCopiar) {
-              botaoCopiar.innerHTML = "📋 Copiar";
+            if (textButCopiar) {
+              setTextButCopiar("📋 Copiar");  
             }
           }, 2000);
         });
@@ -185,8 +179,7 @@ const[tipoProRata, setTipoProRata] = useState('aditivo')
                     name="tipoPR"
                     value="aditivo"
                     checked={tipoProRata === "aditivo"}
-                    onChange={(e)=> setTipoProRata(e.target.value)}
-                    
+                    onChange={(e) => setTipoProRata(e.target.value)}
                   />
                   <span>Aditivo</span>
                 </label>
@@ -196,7 +189,7 @@ const[tipoProRata, setTipoProRata] = useState('aditivo')
                     name="tipoPR"
                     value="devolucao"
                     checked={tipoProRata === "devolucao"}
-                    onChange={(e)=> setTipoProRata(e.target.value)}
+                    onChange={(e) => setTipoProRata(e.target.value)}
                   />
                   <span>Devolução</span>
                 </label>
@@ -237,48 +230,46 @@ const[tipoProRata, setTipoProRata] = useState('aditivo')
               onBlur={formatarDecimal}
               placeholder="0,00"
               value={inputValor}
-              onChange={(e)=>setInputValor(e.target.value)}
+              onChange={(e) => setInputValor(e.target.value)}
             />
           </S.divValor>
 
-          {tipoProRata === 'devolucao' && (
+          {tipoProRata === "devolucao" && (
             <S.divRadio id="cobrado" className="divRadio">
-            <S.fieldsetContainer className="fieldsetContainer">
-              <S.fieldset className="fieldset">
-                <legend>
-                  <b>O dia que foi devolvido será cobrado?</b>
-                </legend>
-                <div className="divInputCobranca">
-                  <label htmlFor="radioSim">
-                    <input
-                      type="radio"
-                      name="cobranca"
-                      value="sim"
-                      id="radioSim"
-                      checked={cobrancaDia === 'sim'}
-                      onChange={(e) => setCobrancaDia(e.target.value)}
-                    />
-                    <span>Sim</span>
-                  </label>
+              <S.fieldsetContainer className="fieldsetContainer">
+                <S.fieldset className="fieldset">
+                  <legend>
+                    <b>O dia que foi devolvido será cobrado?</b>
+                  </legend>
+                  <div className="divInputCobranca">
+                    <label htmlFor="radioSim">
+                      <input
+                        type="radio"
+                        name="cobranca"
+                        value="sim"
+                        id="radioSim"
+                        checked={cobrancaDia === "sim"}
+                        onChange={(e) => setCobrancaDia(e.target.value)}
+                      />
+                      <span>Sim</span>
+                    </label>
 
-                  <label htmlFor="radioNao">
-                    <input
-                      type="radio"
-                      name="cobranca"
-                      value="nao"
-                      id="radioNao"
-                      checked={cobrancaDia === 'nao'}
-                      onChange={(e) => setCobrancaDia(e.target.value)}
-                    />
-                    <span>Não</span>
-                  </label>
-                </div>
-              </S.fieldset>
-            </S.fieldsetContainer>
-          </S.divRadio>
-
+                    <label htmlFor="radioNao">
+                      <input
+                        type="radio"
+                        name="cobranca"
+                        value="nao"
+                        id="radioNao"
+                        checked={cobrancaDia === "nao"}
+                        onChange={(e) => setCobrancaDia(e.target.value)}
+                      />
+                      <span>Não</span>
+                    </label>
+                  </div>
+                </S.fieldset>
+              </S.fieldsetContainer>
+            </S.divRadio>
           )}
-          
 
           <S.divButton className="divButton">
             <S.myButon
@@ -286,7 +277,7 @@ const[tipoProRata, setTipoProRata] = useState('aditivo')
               className="myButton"
               onClick={calcularDiferenca}
             >
-             ➩ Calcular
+              ➩ Calcular
             </S.myButon>
           </S.divButton>
 
@@ -295,51 +286,50 @@ const[tipoProRata, setTipoProRata] = useState('aditivo')
           </S.divClean>
           {showResultado && (
             <S.divResultado className="divResultado">
-           {showResultPreco && (
-            <S.resultPreco id="resultPreco">R$ {resultadoProRata?.toFixed(2).replace(".",",")}</S.resultPreco> 
-           )}
-                      
-           
-            <S.resultDias>
-              {resultDias > 0 && (
-                <>
-                  Período de Locação:{" "}
-                  <span id="spanDias">
-                    {resultDias} {resultDias === 1 ? "dia" : "dias"}
-                  </span>
-                </>
+              {showResultPreco && (
+                <S.resultPreco id="resultPreco">
+                  R$ {resultadoProRata?.toFixed(2).replace(".", ",")}
+                </S.resultPreco>
               )}
-            </S.resultDias>
-          </S.divResultado>
-          )}
-          
-          {showCopiar && (
-            <S.divCopiar className="divCopiar">           
-            <S.buttonCopiar
-            className="btnCopiar"
-            title="Copiar resultado."
-            onClick={copiarResultado}
-          >              
-            📋 Copiar
-          </S.buttonCopiar>          
-             <S.spanHelp
-             className="help"
-             onClick={toggleTooltip}
-             title="Este botão copia automaticamente os dados de período e valor, que serão incluídos na fatura do cliente."
-           >
-             {" "}
-             ❔{" "}
-           </S.spanHelp >  
 
-            {showTooltip && (
-               <S.tooltip onClick={toggleTooltip} id="tooltip">
-               {tooltip}
-             </S.tooltip> 
-            )}
-                     
-        </S.divCopiar>
+              <S.resultDias>
+                {resultDias > 0 && (
+                  <>
+                    Período de Locação:{" "}
+                    <span id="spanDias">
+                      {resultDias} {resultDias === 1 ? "dia" : "dias"}
+                    </span>
+                  </>
+                )}
+              </S.resultDias>
+            </S.divResultado>
           )}
-          
+
+          {showCopiar && (
+            <S.divCopiar className="divCopiar">
+              <S.buttonCopiar
+                className="btnCopiar"
+                title="Copiar resultado."
+                onClick={copiarResultado}
+              >
+                {textButCopiar}
+              </S.buttonCopiar>
+              <S.spanHelp
+                className="help"
+                onClick={toggleTooltip}
+                title="Este botão copia automaticamente os dados de período e valor, que serão incluídos na fatura do cliente."
+              >
+                {" "}
+                ❔{" "}
+              </S.spanHelp>
+
+              {showTooltip && (
+                <S.tooltip onClick={toggleTooltip} id="tooltip">
+                  {tooltip}
+                </S.tooltip>
+              )}
+            </S.divCopiar>
+          )}
         </main>
       </S.Wrapper>
     </S.CenteredContainer>
