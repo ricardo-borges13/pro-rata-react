@@ -20,25 +20,15 @@ export const ProRata = () => {
     anoFinal:0,      
   });
   const[inputValor, setInputValor] = useState("")
-  
-  let inputRad = document.getElementsByName(
-    "cobranca"
-  ) as NodeListOf<HTMLInputElement>;
-
+  const[cobrancaDia, setCobrancaDia] = useState('sim')
   const [inpDatI, setInpDatI] = useState("");
   const [inpDatF, setInpDataF] = useState("");
   const [resultDias, setResultDias] = useState(0);
   const [showResultado, setShowResultado] = useState(false);
   const [showResultPreco, setShowResultPreco] = useState(false);
 const [showCopiar, setShowCopiar] = useState(false);
+const[tipoProRata, setTipoProRata] = useState('aditivo')
 
-
-  function mudarValorInputCobranca() {
-    if (inputRad[1].checked) {
-      inputRad[1].checked = false;
-      inputRad[0].checked = true;
-    }
-  }
 
   function buscarCamposDate() {
     if (!inpDatI || !inpDatF) {
@@ -55,9 +45,7 @@ const [showCopiar, setShowCopiar] = useState(false);
     resultData.anoFinal = parseInt(anoF);
   }
 
-  function calcularDiferenca() {
-    const resultRad = document.getElementsByName("cobranca");
-   
+  function calcularDiferenca() {   
     const dataInicial = new Date(inpDatI);
     const dataFinal = new Date(inpDatF);
 
@@ -77,19 +65,14 @@ const [showCopiar, setShowCopiar] = useState(false);
     const diferenca = diferencaDatas({ dataFinal, dataInicial });
 
     // Converte a diferença para dias
-    dias = Math.ceil(diferenca / (1000 * 60 * 60 * 24));
+    dias = Math.ceil(diferenca / (1000 * 60 * 60 * 24)); 
 
-    // Corrige o erro de tipo: HTMLElement não tem 'checked', mas HTMLInputElement tem.
-    const radio0 = resultRad[0] as HTMLInputElement;
-    const radio1 = resultRad[1] as HTMLInputElement;
-
-    if (radio0.checked) {
+    if (cobrancaDia === 'sim') {
       dias += 1;
     }
-    if (radio1.checked) {
+    if (cobrancaDia === 'nao') {
       dias = dias === 0 ? 1 : dias;
     }
-
     calculoProRata();
     setResultDias(dias);
   }
@@ -111,28 +94,11 @@ const [showCopiar, setShowCopiar] = useState(false);
     setShowCopiar(true);       
   }
 
-  function escolhaTipoProRata() {
-    const resultDiv = document.getElementById("cobrado"); //pega a informação de block ou none
 
-    const radioElem = document.querySelector(
-      'input[name="tipoPR"]:checked'
-    ) as HTMLInputElement | null;
-
-    const radio = radioElem ? radioElem.value : null;
-
-    if (!resultDiv) {
-      console.error("Erro função escolhaTipoProRata. Input NULL");
-      return;
-    }
-
-    resultDiv.style.display = radio === "aditivo" ? "none" : "block";
-    // Sempre que o usuário mudar de "devolução" para "Aditivo" o "SIM" ficar marcado.
-    mudarValorInputCobranca();
-  }
+ 
 
 
-
-  function limparTela() {
+   function limparTela() {
     setInpDatI("");
     setInpDataF("");
     setInputValor("");      
@@ -140,25 +106,10 @@ const [showCopiar, setShowCopiar] = useState(false);
     setShowResultado(false);  
     setShowResultPreco(false);
     setResultadoProRata(undefined);
-    mudarValorInputCobranca();
+    setCobrancaDia('sim');
   }
   const[tooltip, setTooltip] = useState(' Este botão copia automaticamente os dados de período e valor, que serão incluídos na fatura do cliente.');
   const[showTooltip, setShowTooltip] = useState(false);
-  //Tem a função de mostrar o tooltip (help) ao clicar no ponto de interrogação
-  // function toggleTooltip() {    
-  //   setShowTooltip(() => !showTooltip)
-  // }
-
-  // Tem a função de esconder o tooltip (help) ao clicar fora do ponto de interrogação
-  // document.addEventListener("click", function (e) {
-  //   const target = e.target as HTMLElement | null;
-  //   if (!target?.classList.contains("help")) {
-  //     const tooltip = document.getElementById("tooltip");
-  //     if (tooltip) {
-  //       tooltip.style.display = "none";
-  //     }
-  //   }
-  // });
 
     // Alterna a visibilidade do tooltip ao clicar no ponto de interrogação
     function toggleTooltip(e: React.MouseEvent) {
@@ -233,8 +184,9 @@ const [showCopiar, setShowCopiar] = useState(false);
                     type="radio"
                     name="tipoPR"
                     value="aditivo"
-                    onClick={escolhaTipoProRata}
-                    defaultChecked
+                    checked={tipoProRata === "aditivo"}
+                    onChange={(e)=> setTipoProRata(e.target.value)}
+                    
                   />
                   <span>Aditivo</span>
                 </label>
@@ -243,7 +195,8 @@ const [showCopiar, setShowCopiar] = useState(false);
                     type="radio"
                     name="tipoPR"
                     value="devolucao"
-                    onClick={escolhaTipoProRata}
+                    checked={tipoProRata === "devolucao"}
+                    onChange={(e)=> setTipoProRata(e.target.value)}
                   />
                   <span>Devolução</span>
                 </label>
@@ -288,7 +241,8 @@ const [showCopiar, setShowCopiar] = useState(false);
             />
           </S.divValor>
 
-          <S.divRadio id="cobrado" className="divRadio">
+          {tipoProRata === 'devolucao' && (
+            <S.divRadio id="cobrado" className="divRadio">
             <S.fieldsetContainer className="fieldsetContainer">
               <S.fieldset className="fieldset">
                 <legend>
@@ -301,7 +255,8 @@ const [showCopiar, setShowCopiar] = useState(false);
                       name="cobranca"
                       value="sim"
                       id="radioSim"
-                      defaultChecked
+                      checked={cobrancaDia === 'sim'}
+                      onChange={(e) => setCobrancaDia(e.target.value)}
                     />
                     <span>Sim</span>
                   </label>
@@ -312,6 +267,8 @@ const [showCopiar, setShowCopiar] = useState(false);
                       name="cobranca"
                       value="nao"
                       id="radioNao"
+                      checked={cobrancaDia === 'nao'}
+                      onChange={(e) => setCobrancaDia(e.target.value)}
                     />
                     <span>Não</span>
                   </label>
@@ -319,6 +276,9 @@ const [showCopiar, setShowCopiar] = useState(false);
               </S.fieldset>
             </S.fieldsetContainer>
           </S.divRadio>
+
+          )}
+          
 
           <S.divButton className="divButton">
             <S.myButon
@@ -380,8 +340,6 @@ const [showCopiar, setShowCopiar] = useState(false);
         </S.divCopiar>
           )}
           
-
-
         </main>
       </S.Wrapper>
     </S.CenteredContainer>
